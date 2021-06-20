@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,31 +22,50 @@ namespace UserAPI.Controllers
             _context = context;
         }
 
-        // GET: api/User/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<TodoItem>> GetUser(long id)
+
+        [HttpGet]
+        public IEnumerable<User> Get() => repository.Users;
+
+        // GET: api/User/Name
+        [HttpGet("{FullName}")]
+        public async Task<ActionResult<TodoItem>> GetUser(string FullName)
         {
-            var user = await _context.Users.FindAsync(id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return user;
+            if (string.IsNullOrEmpty(FullName))
+                return BadRequest("Value must be passed in the request body.");
+            return Ok(repository[id]);
+            
         }        
         
-        
-        // POST: api/user
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public User Post([FromBody] User res) =>
+        repository.AddUser(new User
         {
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            FullName = res.Name,
+            Phone = res.Phone,
+            Age = res.Age,
+            Email = res.Email
+        });
 
-            return CreatedAtAction(nameof(User), new { phone = user.Phone }, user);
-        }
- 
- 
+        /*[HttpPost]
+        public IActionResult Post([FromBody] User res)
+        {
+            if (!Authenticate())
+                return Unauthorized();
+            return Ok(repository.AddUser(new User
+            {
+                FullName = res.FullName,
+                Phone = res.Phone,
+                Email = res.Email
+            }));
+        }*/
+
+        [HttpPut]
+        public User Put([FromForm] User res) => repository.UpdateUser(res);
+
+        [HttpDelete("{FullName}")]
+        public void Delete(int FullName) => repository.DeleteUser(FullName);
+
+        [HttpGet("ShowUser.{format}"), FormatFilter]
+        public IEnumerable<User> ShowUser() => repository.Users;
     }
 }
