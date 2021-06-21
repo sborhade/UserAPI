@@ -1,8 +1,9 @@
-sing System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
+using UserAPI.Models;
 
-namespace UserAPI.Models
+namespace UserAPI.Repository
 {
     public class UserRepository : IUserRepository
     {
@@ -11,7 +12,7 @@ namespace UserAPI.Models
 
         public UserRepository()
         {
-            Add(new User { Name = "Item1" });
+            Add(new User { FullName = "Item1" });
         }
 
         public IEnumerable<User> GetAll()
@@ -21,8 +22,7 @@ namespace UserAPI.Models
 
         public void Add(User  item)
         {
-            item.Key = Guid.NewGuid().ToString();
-            _Users[item.Key] = item;
+            _Users.TryAdd(item);
         }
 
         public User Find(string key)

@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using UserAPI.Models;
+using UserAPI.Repository;
 
 namespace UserAPI
 {
@@ -33,7 +34,7 @@ namespace UserAPI
 
             services.AddLogging();
             
-            services.AddDbContext<TodoContext>(opt => opt.UseInMemoryDatabase("User"));
+            services.AddDbContext<UserContext>(opt => opt.UseInMemoryDatabase("User"));
 
             // Add our repository type
             services.AddSingleton<IUserRepository, UserRepository>();

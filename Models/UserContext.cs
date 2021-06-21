@@ -4,7 +4,7 @@ namespace UserAPI.Models
 {
     public class UserContext : DbContext
     {
-        public UserContext(DbContextOptions<User> options)
+        public UserContext(DbContextOptions<UserContext> options)
             : base(options)
         {
         }

@@ -1,0 +1,5 @@
+/projects/UserAPI/obj/Debug/netcoreapp3.1/UserAPI.csprojAssemblyReference.cache
+/projects/UserAPI/obj/Debug/netcoreapp3.1/UserAPI.AssemblyInfoInputs.cache
+/projects/UserAPI/obj/Debug/netcoreapp3.1/UserAPI.AssemblyInfo.cs
+/projects/UserAPI/obj/Debug/netcoreapp3.1/UserAPI.csproj.CoreCompileInputs.cache
+/projects/UserAPI/obj/Debug/netcoreapp3.1/UserAPI.MvcApplicationPartsAssemblyInfo.cache
