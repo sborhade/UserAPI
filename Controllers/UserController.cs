@@ -2,80 +2,107 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 using UserAPI.Models;
-using UserAPI.Repository;
-
-namespace UserAPI.Controllers
+using Microsoft.AspNetCore.Authorization;
+ 
+namespace UserService.Controllers
 {
-	[ApiController]
-	[Route("[controller]")]
-	public class UserController : ControllerBase
-	{
-		private readonly ILogger<UserController> _logger;
-		private readonly IUserRepository repository;
-
-		private readonly UserContext _context;
-
-		public UserController(ILogger<UserController> logger, UserContext context, IUserRepository _repository)
-		{
-			_logger = logger;
-			_context = context;
-			repository = _repository;
-		}
-
-
-		[HttpGet]
-		public IEnumerable<User> Get() => repository.GetAll();
-
-		// GET: api/User/Name
-		[HttpGet("{FullName}")]
-		public async Task<ActionResult<User>> GetUser(string FullName)
-		{
-			if (string.IsNullOrEmpty(FullName))
-				return BadRequest("Value must be passed in the request body.");
-			return Ok(repository.Find(FullName));
-
-		}
-
-		[HttpPost]
-		public User Post([FromBody] User res)
-		{
-			repository.Add(new User
-			{
-				FullName = res.FullName,
-				Phone = res.Phone,
-				Age = res.Age,
-				Email = res.Email
-			});
-            return res;
-
-		}
-		/*[HttpPost]
-        public IActionResult Post([FromBody] User res)
+    [Authorize]
+    [Route("api/[controller]")]
+    [ApiController]
+    public class UserController : ControllerBase
+    {
+        private readonly UserContext _context;
+ 
+        public UserController(UserContext context)
         {
-            if (!Authenticate())
-                return Unauthorized();
-            return Ok(repository.AddUser(new User
+            _context = context;
+        }
+ 
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<User>>> GetUser()
+        {
+            return await _context.User.ToListAsync();
+        }
+ 
+ 
+        // GET: api/User/5
+        [HttpGet("{FullName}")]
+        public async Task<ActionResult<User>> GetUser(int FullName)
+        {
+            var User = await _context.User.FindAsync(FullName);
+ 
+            if (User == null)
             {
-                FullName = res.FullName,
-                Phone = res.Phone,
-                Email = res.Email
-            }));
-        }*/
-
-		[HttpPut]
-		public User Put([FromForm] User res)
-		{
-			repository.Update(res);
-            return res;
-		} 
-
-		[HttpDelete("{FullName}")]
-		public void Delete(string FullName) => repository.Remove(FullName);
-
-		[HttpGet("ShowUser.{format}"), FormatFilter]
-		public IEnumerable<User> ShowUser() => repository.GetAll();
-	}
+                return NotFound();
+            }
+ 
+            return User;
+        }
+ 
+        // PUT: api/User/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
+        [HttpPut("{FullName}")]
+        public async Task<IActionResult> PutUser(int FullName, User User)
+        {
+            if (FullName != User.FullName)
+            {
+                return BadRequest();
+            }
+ 
+            _context.Entry(User).State = EntityState.Modified;
+ 
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!UserExists(FullName))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+ 
+            return NoContent();
+        }
+ 
+        // POST: api/User
+        [HttpPost]
+        public async Task<ActionResult<User>> PostUser(User User)
+        {
+            _context.User.Add(User);
+            await _context.SaveChangesAsync();
+ 
+            return CreatedAtAction("GetUser", new { FullName = User.FullName }, User);
+        }
+ 
+        // DELETE: api/User/5
+        [HttpDelete("{FullName}")]
+        public async Task<ActionResult<User>> DeleteUser(string FullName)
+        {
+            var User = await _context.User.FindAsync(FullName);
+            if (User == null)
+            {
+                return NotFound();
+            }
+ 
+            _context.User.Remove(User);
+            await _context.SaveChangesAsync();
+ 
+            return User;
+        }
+ 
+        private bool UserExists(stringFullName)
+        {
+            return _context.User.Any(e => e.FullName == FullName);
+        }
+    }
 }
