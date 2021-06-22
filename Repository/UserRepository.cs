@@ -7,17 +7,21 @@ namespace UserAPI.Repository
 {
     public class UserRepository : IUserRepository
     {
-        private static ConcurrentDictionary<string, User> _Users = 
-              new ConcurrentDictionary<string, User>();
+        UserContext _Users;
 
-        public UserRepository()
+        public UserRepository(IUserContext Users)
         {
-            Add(new User { FullName = "Item1" });
+            _Users = Users;
         }
 
         public IEnumerable<User> GetAll()
         {
-            return _Users.Values;
+            if (_Users != null)
+            {
+                return await _Users.Users.ToListAsync();
+            }
+
+            return null;
         }
 
         public void Add(User  item)
