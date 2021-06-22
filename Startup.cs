@@ -12,7 +12,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using UserAPI.Models;
-using UserAPI.Repository;
 
 namespace UserAPI
 {
@@ -37,7 +36,7 @@ namespace UserAPI
             services.AddDbContext<UserContext>(opt => opt.UseInMemoryDatabase("User"));
 
             // Add our repository type
-            services.AddSingleton<IUserRepository, UserRepository>();
+            //services.AddSingleton<IUserRepository, UserRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

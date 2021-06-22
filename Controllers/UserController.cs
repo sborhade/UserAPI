@@ -25,7 +25,7 @@ namespace UserService.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUser()
         {
-            return await _context.User.ToListAsync();
+            return await _context.Users.ToListAsync();
         }
  
  
@@ -33,7 +33,7 @@ namespace UserService.Controllers
         [HttpGet("{FullName}")]
         public async Task<ActionResult<User>> GetUser(int FullName)
         {
-            var User = await _context.User.FindAsync(FullName);
+            var User = await _context.Users.FindAsync(FullName);
  
             if (User == null)
             {
@@ -46,7 +46,7 @@ namespace UserService.Controllers
         // PUT: api/User/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         [HttpPut("{FullName}")]
-        public async Task<IActionResult> PutUser(int FullName, User User)
+        public async Task<IActionResult> PutUser(string FullName, User User)
         {
             if (FullName != User.FullName)
             {
@@ -78,7 +78,7 @@ namespace UserService.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User User)
         {
-            _context.User.Add(User);
+            _context.Users.Add(User);
             await _context.SaveChangesAsync();
  
             return CreatedAtAction("GetUser", new { FullName = User.FullName }, User);
@@ -88,21 +88,21 @@ namespace UserService.Controllers
         [HttpDelete("{FullName}")]
         public async Task<ActionResult<User>> DeleteUser(string FullName)
         {
-            var User = await _context.User.FindAsync(FullName);
+            var User = await _context.Users.FindAsync(FullName);
             if (User == null)
             {
                 return NotFound();
             }
  
-            _context.User.Remove(User);
+            _context.Users.Remove(User);
             await _context.SaveChangesAsync();
  
             return User;
         }
  
-        private bool UserExists(stringFullName)
+        private bool UserExists(string FullName)
         {
-            return _context.User.Any(e => e.FullName == FullName);
+            return _context.Users.Any(e => e.FullName == FullName);
         }
     }
 }
